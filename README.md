@@ -1,8 +1,8 @@
 # kubernetes-talk
-	Repo housing resources, tutorials to help my talk on Kubernetes
+Repo housing resources, tutorials to help my talk on Kubernetes
 
-	## Resources
-* Udacity course by Kelsey Hightower
+## Resources
+  * Udacity course by Kelsey Hightower
   * White paper by MongoDB on microservices
   * https://www.youtube.com/watch?v=_vHTaIJm9uY by Janakiram MSV.
 
@@ -17,7 +17,6 @@ npm run develop
 
 Now point your browser to http://localhost:3001/
 
-
 ### generating static HTML
 This is only necessary if you want to publish the HTML to a server.
 
@@ -31,5 +30,5 @@ To preview the generated static output:
 npm run static
 ```
 
-# References
-	1. https://github.com/jldec/pub-sample-deck
+## References
+1. https://github.com/jldec/pub-sample-deck
