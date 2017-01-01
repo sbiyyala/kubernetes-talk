@@ -5,6 +5,7 @@ Repo housing resources, tutorials to help my talk on Kubernetes
   * Udacity course by Kelsey Hightower
   * White paper by MongoDB on microservices
   * https://www.youtube.com/watch?v=_vHTaIJm9uY by Janakiram MSV.
+  * https://12factor.net/
 
 ## Presentation software
   * The rough cut of this talk is being edited by pub-server
