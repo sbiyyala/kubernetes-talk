@@ -21,15 +21,17 @@ Shishir Biyyala
 
 ## Lists
 
-Text followed by a list.
-
-1. with with with with with with with
-  - **bold words words**
-  - _italic words words_
+Focus points
+1. Explain the following:
+  - _pod_
+  - _replication controller_
+  - _replica set_
   - words words
-  - words words
-- nice nice nice nice nice nice
-
+  - words words 
+2. Demo using minikube:
+	- demo the startup
+	- demo the shutdown, and back up; how kubernetes bring the docker containers backup
+3. Demo the rolling changes	
 
 ---- ----
 

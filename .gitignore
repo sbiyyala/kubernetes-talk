@@ -13,3 +13,4 @@ node_modules/
 benchmarks/graphs
 .DS_Store
 Thumbs.db
+*.idea*
