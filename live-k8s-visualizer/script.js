@@ -100,7 +100,7 @@ var connectControllers = () => {
         const pod = pods.items[j];
         if (matchesLabelQuery(pod.metadata.labels, deployment.spec.selector.matchLabels)) {
           jsPlumb.connect({
-            source: 'controller-' + deployment.metadata.name,
+            source: 'deployment-' + deployment.metadata.name,
             target: 'pod-' + pod.metadata.name,
             anchors: ["Bottom", "Bottom"],
             paintStyle: {lineWidth: 5, strokeStyle: 'rgb(51,105,232)'},
@@ -264,7 +264,7 @@ const renderGroups = () => {
       var eltDiv = null;
       //console.log(value);
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
-      if (value.type == "pod") {
+      if (value.type === "pod") {
         if ('deletionTimestamp' in value.metadata) {
           phase = 'terminating';
         }
@@ -276,7 +276,8 @@ const renderGroups = () => {
             (value.status.podIP ? value.status.podIP : "") + "<br/><br/>" +
             "(" + (value.spec.nodeName ? truncate(value.spec.nodeName, 6) : "None") + ")" +
             '</span>');
-      } else if (value.type == "service") {
+      } else if (value.type === "service") {
+
         eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
             '" style="left: ' + 75 + '; top: ' + y + '"/>');
         eltDiv.html('<span>' +
@@ -285,7 +286,8 @@ const renderGroups = () => {
             (value.spec.clusterIP ? "<br/><br/>" + value.spec.clusterIP : "") +
             (value.status.loadBalancer && value.status.loadBalancer.ingress ? "<br/><a style='color:white; text-decoration: underline' href='http://" + value.status.loadBalancer.ingress[0].ip + "'>" + value.status.loadBalancer.ingress[0].ip + "</a>" : "") +
             '</span>');
-      } else {
+      } else if (value.type === "replicationController") {
+
         var key = 'controller-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
         counts[key] = key in counts ? counts[key] + 1 : 0;
         //eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
@@ -299,7 +301,18 @@ const renderGroups = () => {
             value.metadata.name +
             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
             '</span>');
+      } else if (value.type === "deployment") {
+          var minLeft = 900;
+          var calcLeft = 400 + (value.status.replicas * 130);
+          var left = minLeft > calcLeft ? minLeft : calcLeft;
+          eltDiv = $('<div class="window wide deployment" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
+              '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
+          eltDiv.html('<span>' +
+              value.metadata.name +
+              (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
+              '</span>');
       }
+
       div.append(eltDiv);
       x += 130;
     });
