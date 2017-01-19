@@ -432,7 +432,7 @@ function refresh(instance) {
       });
 }
 
-jsPlumb.bind("ready", function () {
+jsPlumb.bind("ready", () => {
   var instance = jsPlumb.getInstance({
     // default drag options
     DragOptions: {cursor: 'pointer', zIndex: 2000},

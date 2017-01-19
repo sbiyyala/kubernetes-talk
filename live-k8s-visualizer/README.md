@@ -59,7 +59,8 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
     ```
    http://<public ip>/static/
    ```
-### Backlog
+
+### Backlog:
    * Write CSS to distinguish b/w controllers and deployments
    * Multiple services are being overridden on the UI - fix the behavior
    * Having a 'fixed' node consumes unnecessary space - especially in case of multiple rc/deployments
