@@ -16,6 +16,7 @@ Repo housing resources, tutorials to help my talk on Kubernetes
       * https://github.com/google/cluster-insight
       * https://github.com/kubernetes-ui/graph 
   * Minikube dashboard : https://www.youtube.com/watch?v=3lhf7T9Bp2E
+  * Brian Dorsey: https://www.youtube.com/watch?v=DGlQgNmobuc
 
 ## Presentation software
   * The rough cut of this talk is being edited by pub-server

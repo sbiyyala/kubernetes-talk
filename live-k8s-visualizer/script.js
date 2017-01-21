@@ -340,12 +340,12 @@ const loadData = () => {
     if (data.items) {
       $.each(data.items, (key, val) => {
         val.type = 'pod';
-        if (val.metadata.annotations && val.metadata.annotations['visualizer/uses']) {
-          const key = val.metadata.labels.app ? val.metadata.labels.app : val.metadata.labels.run;
+        if (val.metadata.labels && val.metadata.labels.uses) {
+          const key = val.metadata.labels.uses;
           if (!uses[key]) {
-            uses[key] = val.metadata.annotations['visualizer/uses'].split(',');
+            uses[key] = key.split(",");
           } else {
-            $.each(val.metadata.annotations['visualizer/uses'].split(','), (ix, use) => insertUse(key, use));
+            $.each(key.split(","), (ix, use) => insertUse(key, use));
           }
         }
       });
