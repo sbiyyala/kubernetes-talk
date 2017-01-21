@@ -81,11 +81,11 @@ var connectControllers = () => {
           jsPlumb.connect({
             source: 'controller-' + controller.metadata.name,
             target: 'pod-' + pod.metadata.name,
-            anchors: ["Bottom", "Bottom"],
-            paintStyle: {lineWidth: 5, strokeStyle: 'rgb(51,105,232)'},
+            anchors: ["Bottom", "Top"],
+            paintStyle: {lineWidth: 3, strokeStyle: 'rgb(51,105,232)'},
             joinStyle: "round",
-            endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 7},
-            connector: ["Flowchart", {cornerRadius: 5}]
+            endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
+            connector: ["Flowchart", {cornerRadius: 3}]
           });
         }
       }
@@ -172,9 +172,9 @@ const connectUses = () => {
                 connector: ["Bezier", {curviness: 75}],
                 paintStyle: {lineWidth: 2, strokeStyle: color},
                 overlays: [
-                  ["Arrow", {width: 15, length: 30, location: 0.3}],
-                  ["Arrow", {width: 15, length: 30, location: 0.6}],
-                  ["Arrow", {width: 15, length: 30, location: 1}]
+                  ["Arrow", {width: 15, length: 10, location: 0.3}],
+                  ["Arrow", {width: 15, length: 10, location: 0.6}],
+                  ["Arrow", {width: 15, length: 10, location: 1}]
                 ]
               });
         });
@@ -302,15 +302,15 @@ const renderGroups = () => {
             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
             '</span>');
       } else if (value.type === "deployment") {
-          var minLeft = 900;
-          var calcLeft = 400 + (value.status.replicas * 130);
-          var left = minLeft > calcLeft ? minLeft : calcLeft;
-          eltDiv = $('<div class="window wide deployment" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
-              '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
-          eltDiv.html('<span>' +
-              value.metadata.name +
-              (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
-              '</span>');
+        var minLeft = 600;
+        var calcLeft = 200 + (value.status.replicas * 130);
+        var left = minLeft > calcLeft ? minLeft : calcLeft;
+        eltDiv = $('<div class="window wide deployment" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
+            '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
+        eltDiv.html('<span>' +
+            value.metadata.name +
+            (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
+            '</span>');
       }
 
       div.append(eltDiv);
@@ -391,7 +391,7 @@ const loadData = () => {
     deployments = data;
 
     if (data.items) {
-      $.each(data.items, function (key, val) {
+      $.each(data.items, (key, val) => {
         val.type = 'deployment';
         //console.log("Controller ID = " + val.metadata.name)
       });
@@ -424,6 +424,7 @@ function refresh(instance) {
           renderNodes();
           renderGroups();
           connectControllers();
+
         } finally {
           setTimeout(() => {
             refresh(instance);
@@ -440,11 +441,11 @@ jsPlumb.bind("ready", () => {
     // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
     ConnectionOverlays: [
       ["Arrow", {location: 1}]
-      //[ "Label", {
-      //	location:0.1,
-      //	id:"label",
-      //	cssClass:"aLabel"
-      //}]
+      [ "Label", {
+      	location:0.1,
+      	id:"label",
+      	cssClass:"aLabel"
+      }]
     ],
     Container: "flowchart-demo"
   });

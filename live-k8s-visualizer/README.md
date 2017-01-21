@@ -61,6 +61,8 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
    ```
 
 ### Backlog:
-   * ~Write CSS to distinguish b/w controllers and deployments~
-   * Multiple services are being overridden on the UI - fix the behavior
+   * Multiple services/deployments are being overridden on the UI - fix the behavior [the UI is using the same placements as controller code]
    * Having a 'fixed' node consumes unnecessary space - especially in case of multiple rc/deployments
+   * There looks to be bug in the UI - everything is being done under "connectControllers", should be extracted out(?)
+      Should services be extracted out as well?
+
