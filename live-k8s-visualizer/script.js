@@ -69,7 +69,7 @@ const matchesLabelQuery = (labels, selector) => {
 };
 
 var connectControllers = () => {
-  connectUses();
+  //connectUses();
 
   if (controllers.items) {
     for (var i = 0; i < controllers.items.length; i++) {
@@ -81,7 +81,7 @@ var connectControllers = () => {
           jsPlumb.connect({
             source: 'controller-' + controller.metadata.name,
             target: 'pod-' + pod.metadata.name,
-            anchors: ["Bottom", "Top"],
+            anchors: ["Top", "Top"],
             paintStyle: {lineWidth: 3, strokeStyle: 'rgb(51,105,232)'},
             joinStyle: "round",
             endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
@@ -126,7 +126,7 @@ var connectControllers = () => {
                 anchors: ["Bottom", "Top"],
                 paintStyle: {lineWidth: 5, strokeStyle: 'rgb(0,153,57)'},
                 endpointStyle: {fillStyle: 'rgb(0,153,57)', radius: 7},
-                connector: ["Flowchart", {cornerRadius: 5}]
+                connector: ["Flowchart", {cornerRadius: 3}]
               });
         }
       }
@@ -260,7 +260,7 @@ const renderGroups = () => {
     var div = $('<div/>');
     var x = 100;
     $.each(list, (index, value) => {
-      //console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index)
+      console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index)
       var eltDiv = null;
       //console.log(value);
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
