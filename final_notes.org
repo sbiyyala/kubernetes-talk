@@ -16,6 +16,9 @@ $ kubectl scale deployment helloworld-deployment --replicas=10
 kill the added node and show re-adjustment
 show how there is no loss of service at any given point 
 + kill all processes in particular container - ps aux | grep 'node' | grep -v grep | awk '{print $2}' | xargs kill -9  
++ kubectl exec helloworld-deployment-1131205720-lmasv ps aux | grep 'node' | grep -v grep | awk '{print $2}'
++ kubectl exec helloworld-deployment-1131205720-lmasv -i -t /bin/bash : to get into the bash shell of a podo
+
 ** Demo these things: Add these to the slides
 + Mention google cloud integration
 + How pods are recreated
@@ -82,3 +85,5 @@ https://console.cloud.google.com/kubernetes/list?project=sbiyyala-k8s-codelab
 + services: https://kubernetes.io/docs/user-guide/services/
 + Kubernetes control plane: https://en.wikipedia.org/wiki/Kubernetes#Kubernetes_control_plane
 
+* Resources
++ k8s python api: https://www.linux.com/learn/kubernetes/enjoy-kubernetes-python

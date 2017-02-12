@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld-deployment
+  labels:
+    app: helloworld
+    visualize: "true"
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: helloworld
+        visualize: "true"
+    spec:
+      containers:
+      - name: k8s-demo
+        image: index.docker.io/sbiyyala/k8s-demo:4
+        ports:
+        - name: nodejs-port
+          containerPort: 3001
