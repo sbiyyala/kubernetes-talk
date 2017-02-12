@@ -1,0 +1,84 @@
+* Demo 1 - 
+** show the yaml file before running it
+** Rolling updates & scaling
+*** Replication-controller
+$ kubectl create -f replication-controller/helloworld-repl-controller-2.json
+$ kubectl expose rc helloworld --type="LoadBalancer"
+$ kubectl rolling-update helloworld --image=sbiyyala/k8s-demo:4
+$ kubectl scale rc helloworld --replicas=5 
+*** Deployment :: go with this! 
+$ kubectl create -f deployment/helloworld.json
+$ kubectl expose deployment helloworld-deployment --type="LoadBalancer"
+$ kubectl set image deployment helloworld-deployment k8s-demo=sbiyyala/k8s-demo:4
+$ kubectl scale deployment helloworld-deployment --replicas=5 
+Add a new node on GCE
+$ kubectl scale deployment helloworld-deployment --replicas=10
+kill the added node and show re-adjustment
+show how there is no loss of service at any given point 
++ kill all processes in particular container - ps aux | grep 'node' | grep -v grep | awk '{print $2}' | xargs kill -9  
+** Demo these things: Add these to the slides
++ Mention google cloud integration
++ How pods are recreated
++ How pods can be scaled
++ How rolling updates can be done
++ Add a node to the google cloud cluster - and scale to demo the readjusment capability
++ Stress on how there is no loss of service at any given point [have a script wget]
+
+Container Benefits: [Remove, but mention it]
+Container image is a single binary with all dependencies, provides isolation
+Closer parity between Dev/QA/Prod environments
+
+
+** description of a kubectl command status
+$ kubectl describe rc helloworld
+$ kubectl describe deployment helloworld
+** Shutdown a demo
+$ kubectl delete deployments,services -l "app in (redis, guestbook)"
+$ kubectl get pods -o wide [To get the node on which the pod is deployed]
+
+* Demo 2 - WP + Mysql
++ kubectl create -f wordpress-secrets.yml
++ kubectl create -f wordpress-single-deployment-no-volumes.json
++ kubectl expose deployment wordpress-deployment --type="LoadBalancer"
+============
+* Notes from Daniel's feedback
++ Make multiple passes of what you want to show
++ Be knowledgeable about:
+  - k8s vs swarm vs mesos etc
+  - k8s vs chef/ansible/puppet etc..: Apples to oranges, chef/ansible/puppet deals with simple configuration management, application deployment, task-execution while k8s deals with cluster management of linux containers as a single system to accelerate Dev and simplify Ops
++ Add a new node in the GCE and show how it gets used
+
+* Gain clarity on 
++ How k8s is functioning in the example? what are controlling from your laptop? 
+using: 
++ glcoud command line utility on my mac
++ Every time I do:  gcloud container clusters get-credentials wp-volumes --zone us-east1-b --project sbiyyala-k8s-codelab, a new entry is generated into ~/.kube/config
+
++ Where is the master node? - GCE is built on top of k8s. So the master node is managed for GCE itself
+++ kubectl cluster-info gives you the info regd. master, nodes etc.
++ How does the demo correspond the architecture diagram? => All controlled by GCE 
+
+* General clarity
++ https://console.cloud.google.com/kubernetes/clusters/details/us-east1-b/wp-volumes<cluster-name>?project=sbiyyala-k8s-codelab
++ List of container clusters on GCE:
+https://console.cloud.google.com/kubernetes/list?project=sbiyyala-k8s-codelab
++ Navigation into GCP: https://console.cloud.google.com/compute/instances?project=sbiyyala-k8s-codelab
++ gcloud container clusters get-credentials wp-volumes --zone us-east1-b --project sbiyyala-k8s-codelab changes the macbook air config to the gce cluster
++ In slide 10, what are the other kinds of resources that pods can share?
++ How do you want to transition into orchestration 
+
+* Definition sources
++ Kubelet: https://kubernetes.io/docs/admin/kubelet/
++ Pod: https://kubernetes.io/docs/user-guide/pods/
++ ReplicaSet: https://kubernetes.io/docs/user-guide/replicasets/
++ Deployment: https://kubernetes.io/docs/user-guide/deployments/
++ architecture source: https://www.google.com/search?q=kubelet+kubernetes&espv=2&biw=1222&bih=726&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjz9s-yy4HSAhUP6WMKHfaCAS0Q_AUICSgE#imgrc=lMdvaunSPkUtOM:
++ http://www.slideshare.net/rajdeep/introduction-to-kubernetes?next_slideshow=1
++ http://www.slideshare.net/imesh/an-introduction-to-kubernetes
++ master components: https://kubernetes.io/docs/admin/cluster-components/
++ whatisk8s: https://kubernetes.io/docs/whatisk8s/
++ Labels & Selectors: https://kubernetes.io/docs/user-guide/labels/#label-selectors
++ kubectl: https://kubernetes.io/docs/user-guide/kubectl-overview/
++ services: https://kubernetes.io/docs/user-guide/services/
++ Kubernetes control plane: https://en.wikipedia.org/wiki/Kubernetes#Kubernetes_control_plane
+
