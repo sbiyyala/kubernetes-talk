@@ -44,12 +44,6 @@ $ kubectl get pods -o wide [To get the node on which the pod is deployed]
 + kubectl create -f wordpress-single-deployment-no-volumes.json
 + kubectl expose deployment wordpress-deployment --type="LoadBalancer"
 ============
-* Notes from Daniel's feedback
-+ Make multiple passes of what you want to show
-+ Be knowledgeable about:
-  - k8s vs swarm vs mesos etc
-  - k8s vs chef/ansible/puppet etc..: Apples to oranges, chef/ansible/puppet deals with simple configuration management, application deployment, task-execution while k8s deals with cluster management of linux containers as a single system to accelerate Dev and simplify Ops
-+ Add a new node in the GCE and show how it gets used
 
 * Gain clarity on 
 + How k8s is functioning in the example? what are controlling from your laptop? 
