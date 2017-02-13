@@ -24,7 +24,7 @@ def main(argv):
     filter_lambda = lambda x: 'deployment' in x
     map_lambda = lambda x: x['metadata']['name']
     pod_list = get_pod_list("http://localhost:8001/api/v1/pods", filter_lambda, map_lambda)
-    print pod_list
+    print "Killing containers in %s pod instances"%(len(pod_list))
     kill_containers_in_pod_list(pod_list)
     
 if __name__ == '__main__':
