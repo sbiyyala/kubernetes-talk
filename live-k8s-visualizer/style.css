@@ -18,7 +18,7 @@
 }
 
 .pod {
-  width: 100px;
+  width: 150px;
   background-color:#eeeeef;
 }
 
@@ -27,7 +27,8 @@
 }
 
 .window {
-  line-height: 1em;
+  line-height: 2em;
+  outline-width: inherit;
   display: table;
 }
 

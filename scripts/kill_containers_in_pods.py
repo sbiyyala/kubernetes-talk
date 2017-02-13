@@ -7,7 +7,7 @@ import json
 from subprocess import call
 
 '''
-Get a list of pods based on input criteria
+Get a list of pods based on filter/map criteria
 '''
 def get_pod_list(url, filter_lambda = lambda x: x, map_lambda = lambda x: x):
     response = requests.get(url=url)
@@ -16,6 +16,9 @@ def get_pod_list(url, filter_lambda = lambda x: x, map_lambda = lambda x: x):
 
     return [str(x) for x in pod_name_list]
 
+'''
+Call kill containers script for relevant pod
+'''
 def kill_containers_in_pod_list(pod_list):
     for pod in pod_list:
         call(["./kill_containers_in_pods.sh", pod])
