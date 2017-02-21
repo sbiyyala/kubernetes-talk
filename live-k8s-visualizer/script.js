@@ -68,45 +68,24 @@ const matchesLabelQuery = (labels, selector) => {
   return match;
 };
 
-var connectControllers = () => {
+var connectDeployments = () => {
   //connectUses();
 
-  if (controllers.items) {
-    for (var i = 0; i < controllers.items.length; i++) {
-      var controller = controllers.items[i];
-      for (var j = 0; j < pods.items.length; j++) {
-        var pod = pods.items[j];
-        if (matchesLabelQuery(pod.metadata.labels, controller.spec.selector)) {
-          //console.log('connect controller: ' + 'controller-' + controller.metadata.name + ' to pod-' + pod.metadata.name);
-          jsPlumb.connect({
-            source: 'controller-' + controller.metadata.name,
-            target: 'pod-' + pod.metadata.name,
-            anchors: ["Top", "Top"],
-            paintStyle: {lineWidth: 3, strokeStyle: 'rgb(51,105,232)'},
-            joinStyle: "round",
-            endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
-            connector: ["Flowchart", {cornerRadius: 3}]
-          });
-        }
-      }
-    }
-  }
-
-
   if (deployments.items) {
-    for (var i = 0; i < deployments.items.length; i++) {
+    for (let i = 0; i < deployments.items.length; i++) {
       var deployment = deployments.items[i];
-      for (var j = 0; j < pods.items.length; j++) {
-        const pod = pods.items[j];
+      for (let j = 0; j < pods.items.length; j++) {
+        var pod = pods.items[j];
         if (matchesLabelQuery(pod.metadata.labels, deployment.spec.selector.matchLabels)) {
+          //console.log('connect controller: ' + 'controller-' + controller.metadata.name + ' to pod-' + pod.metadata.name);
           jsPlumb.connect({
             source: 'deployment-' + deployment.metadata.name,
             target: 'pod-' + pod.metadata.name,
             anchors: ["Bottom", "Bottom"],
-            paintStyle: {lineWidth: 5, strokeStyle: 'rgb(51,105,232)'},
+            paintStyle: {lineWidth: 3, strokeStyle: 'rgb(51,105,232)'},
             joinStyle: "round",
-            endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 7},
-            connector: ["Flowchart", {cornerRadius: 5}]
+            endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
+            connector: ["Flowchart", {cornerRadius: 3}]
           });
         }
       }
@@ -260,14 +239,14 @@ const renderGroups = () => {
     var div = $('<div/>');
     var x = 100;
     $.each(list, (index, value) => {
-      console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index)
+      //console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index);
       var eltDiv = null;
-      //console.log(value);
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
       if (value.type === "pod") {
-        if ('deletionTimestamp' in value.metadata) {
+        if ('deletionTimestamp' in value.metadata || anyDeadContainers(value)) {
           phase = 'terminating';
         }
+
         eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
             '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
         eltDiv.html('<span>' +
@@ -286,26 +265,16 @@ const renderGroups = () => {
             (value.spec.clusterIP ? "<br/><br/>" + value.spec.clusterIP : "") +
             (value.status.loadBalancer && value.status.loadBalancer.ingress ? "<br/><a style='color:white; text-decoration: underline' href='http://" + value.status.loadBalancer.ingress[0].ip + "'>" + value.status.loadBalancer.ingress[0].ip + "</a>" : "") +
             '</span>');
-      } else if (value.type === "replicationController") {
+      } else if (value.type === "deployment") {
 
-        var key = 'controller-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
+        var key = 'deployment-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
         counts[key] = key in counts ? counts[key] + 1 : 0;
         //eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
         //	'" style="left: ' + (900 + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
         var minLeft = 900;
         var calcLeft = 400 + (value.status.replicas * 130);
         var left = minLeft > calcLeft ? minLeft : calcLeft;
-        eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
-            '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
-        eltDiv.html('<span>' +
-            value.metadata.name +
-            (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
-            '</span>');
-      } else if (value.type === "deployment") {
-        var minLeft = 600;
-        var calcLeft = 200 + (value.status.replicas * 130);
-        var left = minLeft > calcLeft ? minLeft : calcLeft;
-        eltDiv = $('<div class="window wide deployment" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
+        eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
             '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
         eltDiv.html('<span>' +
             value.metadata.name +
@@ -321,6 +290,8 @@ const renderGroups = () => {
     elt.append(div);
   });
 };
+
+const anyDeadContainers = value => value.status.containerStatuses && value.status.containerStatuses.some((x => x.ready === false));
 
 const insertUse = (name, use) => {
   for (var i = 0; i < uses[name].length; i++) {
@@ -351,18 +322,6 @@ const loadData = () => {
       });
     }
   });
-
-  const req2 = $.getJSON("/api/v1/namespaces/default/replicationcontrollers?labelSelector=visualize%3Dtrue", data => {
-    controllers = data;
-
-    if (data.items) {
-      $.each(data.items, (key, val) => {
-        val.type = 'replicationController';
-        //console.log("Controller ID = " + val.metadata.name)
-      });
-    }
-  });
-
 
   const req3 = $.getJSON("/api/v1/namespaces/default/services?labelSelector=visualize%3Dtrue", data => {
     services = data;
@@ -398,7 +357,7 @@ const loadData = () => {
     }
   });
 
-  $.when(req1, req2, req3, req4, req5).then(function () {
+  $.when(req1, req3, req4, req5).then( () => {
     deferred.resolve();
   });
 
@@ -423,7 +382,7 @@ function refresh(instance) {
           $('#sheet').empty();
           renderNodes();
           renderGroups();
-          connectControllers();
+          connectDeployments();
 
         } finally {
           setTimeout(() => {

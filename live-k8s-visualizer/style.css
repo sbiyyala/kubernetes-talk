@@ -13,12 +13,12 @@
 }
 
 .deployment {
-  background-color:#778899;
+  background-color:rgb(51,105,232);
   color: white;
 }
 
 .pod {
-  width: 150px;
+  width: 100px;
   background-color:#eeeeef;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .window {
-  line-height: 2em;
+  line-height: 1em;
   outline-width: inherit;
   display: table;
 }
