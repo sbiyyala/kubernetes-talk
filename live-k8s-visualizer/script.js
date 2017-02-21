@@ -357,7 +357,7 @@ const loadData = () => {
     }
   });
 
-  $.when(req1, req3, req4, req5).then(function () {
+  $.when(req1, req3, req4, req5).then( () => {
     deferred.resolve();
   });
 
