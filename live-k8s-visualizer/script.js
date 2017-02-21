@@ -81,7 +81,7 @@ var connectDeployments = () => {
           jsPlumb.connect({
             source: 'deployment-' + deployment.metadata.name,
             target: 'pod-' + pod.metadata.name,
-            anchors: ["Top", "Top"],
+            anchors: ["Bottom", "Bottom"],
             paintStyle: {lineWidth: 3, strokeStyle: 'rgb(51,105,232)'},
             joinStyle: "round",
             endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
@@ -243,20 +243,9 @@ const renderGroups = () => {
       var eltDiv = null;
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
       if (value.type === "pod") {
-        if ('deletionTimestamp' in value.metadata) {
+        if ('deletionTimestamp' in value.metadata || anyDeadContainers(value)) {
           phase = 'terminating';
         }
-
-        console.log("======");
-        console.log(`size of containers within pod: ${value.status.containerStatuses.length}`);
-
-        const anyDeadContainers = value.status.containerStatuses.some((x => x.ready === false));
-
-        if (anyDeadContainers) {
-          console.log(`Dead containers in pod which require restart`); // TODO: continue from here, identify the pod name
-        }
-
-        console.log("========");
 
         eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
             '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
@@ -302,6 +291,8 @@ const renderGroups = () => {
   });
 };
 
+const anyDeadContainers = value => value.status.containerStatuses && value.status.containerStatuses.some((x => x.ready === false));
+
 const insertUse = (name, use) => {
   for (var i = 0; i < uses[name].length; i++) {
     if (uses[name][i] == use) {
@@ -331,17 +322,6 @@ const loadData = () => {
       });
     }
   });
-
-  //const req2 = $.getJSON("/api/v1/namespaces/default/replicationcontrollers?labelSelector=visualize%3Dtrue", data => {
-  //  controllers = data;
-  //
-  //  if (data.items) {
-  //    $.each(data.items, (key, val) => {
-  //      val.type = 'replicationController';
-  //      //console.log("Controller ID = " + val.metadata.name)
-  //    });
-  //  }
-  //});
 
   const req3 = $.getJSON("/api/v1/namespaces/default/services?labelSelector=visualize%3Dtrue", data => {
     services = data;
