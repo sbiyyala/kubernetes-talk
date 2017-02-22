@@ -87,15 +87,18 @@ var connectDeployments = () => {
             endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
             connector: ["Flowchart", {cornerRadius: 3}]
           });
+
+          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
+          jsPlumb.draggable('deployment-' + deployment.metadata.name, {containment:"parent"});
         }
       }
     }
   }
 
   if (services.items) {
-    for (var i = 0; i < services.items.length; i++) {
+    for (let i = 0; i < services.items.length; i++) {
       var service = services.items[i];
-      for (var j = 0; j < pods.items.length; j++) {
+      for (let j = 0; j < pods.items.length; j++) {
         const pod = pods.items[j];
         if (matchesLabelQuery(pod.metadata.labels, service.spec.selector)) {
           jsPlumb.connect(
@@ -103,10 +106,13 @@ var connectDeployments = () => {
                 source: 'service-' + service.metadata.name,
                 target: 'pod-' + pod.metadata.name,
                 anchors: ["Bottom", "Top"],
-                paintStyle: {lineWidth: 5, strokeStyle: 'rgb(0,153,57)'},
+                paintStyle: {lineWidth: 3, strokeStyle: 'rgb(0,153,57)'},
                 endpointStyle: {fillStyle: 'rgb(0,153,57)', radius: 7},
                 connector: ["Flowchart", {cornerRadius: 3}]
               });
+
+          jsPlumb.draggable('service-' + service.metadata.name, {containment:"parent"});
+          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
         }
       }
     }
@@ -120,17 +126,17 @@ const colors = [
 ];
 
 const connectUses = () => {
-  var colorIx = 0;
-  var keys = [];
+  let colorIx = 0;
+  let keys = [];
 
   $.each(uses, key => keys.push(key));
 
   keys.sort((a, b) => a > b);
 
   $.each(keys, idx => {
-    var key = keys[idx];
-    var list = uses[key];
-    var color = colors[colorIx];
+    let key = keys[idx];
+    let list = uses[key];
+    let color = colors[colorIx];
     colorIx++;
     if (colorIx >= colors.length) {
       colorIx = 0;
@@ -156,6 +162,10 @@ const connectUses = () => {
                   ["Arrow", {width: 15, length: 10, location: 1}]
                 ]
               });
+
+          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
+          jsPlumb.draggable('service-' + serviceId, {containment:"parent"});
+
         });
       }
     });
@@ -172,7 +182,7 @@ const makeGroupOrder = () => {
 
     if (uses[key]) {
       const value = uses[key];
-      $.each(value, function (ix, uses_label) {
+      $.each(value, (ix, uses_label) => {
         if (!groupScores[uses_label]) {
           groupScores[uses_label] = 1;
         } else {
@@ -406,9 +416,11 @@ jsPlumb.bind("ready", () => {
       	cssClass:"aLabel"
       }]
     ],
-    Container: "flowchart-demo"
+    Container: "flowchart-demo",
+    ConnectionsDetachable : true
   });
 
   refresh(instance);
   jsPlumb.fire("jsPlumbDemoLoaded", instance);
+
 });
