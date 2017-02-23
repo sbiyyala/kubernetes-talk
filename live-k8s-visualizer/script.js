@@ -315,7 +315,7 @@ const insertUse = (name, use) => {
 const loadData = () => {
   var deferred = new $.Deferred();
 
-  const req1 = $.getJSON("/api/v1/namespaces/default/pods?labelSelector=visualize%3Dtrue", data => {
+  const podsResponse = $.getJSON("/api/v1/namespaces/default/pods?labelSelector=visualize%3Dtrue", data => {
     pods = data;
 
     if (data.items) {
@@ -333,7 +333,7 @@ const loadData = () => {
     }
   });
 
-  const req3 = $.getJSON("/api/v1/namespaces/default/services?labelSelector=visualize%3Dtrue", data => {
+  const servicesReponse = $.getJSON("/api/v1/namespaces/default/services?labelSelector=visualize%3Dtrue", data => {
     services = data;
 
     if (data.items) {
@@ -344,7 +344,7 @@ const loadData = () => {
     }
   });
 
-  const req4 = $.getJSON("/api/v1/nodes", data => {
+  const nodesResponse = $.getJSON("/api/v1/nodes", data => {
     nodes = data;
 
     if (data.items) {
@@ -355,7 +355,7 @@ const loadData = () => {
     }
   });
 
-  const req5 = $.getJSON("/apis/extensions/v1beta1/namespaces/default/deployments?labelSelector=visualize%3Dtrue", data => {
+  const deploymentsReponse = $.getJSON("/apis/extensions/v1beta1/namespaces/default/deployments?labelSelector=visualize%3Dtrue", data => {
 
     deployments = data;
 
@@ -367,7 +367,7 @@ const loadData = () => {
     }
   });
 
-  $.when(req1, req3, req4, req5).then( () => {
+  $.when(podsResponse, servicesReponse, nodesResponse, deploymentsReponse).then( () => {
     deferred.resolve();
   });
 
