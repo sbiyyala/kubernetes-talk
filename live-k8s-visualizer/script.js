@@ -68,7 +68,7 @@ const matchesLabelQuery = (labels, selector) => {
   return match;
 };
 
-var connectDeployments = () => {
+const connectDeployments = () => {
   //connectUses();
 
   if (deployments.items) {
@@ -94,6 +94,9 @@ var connectDeployments = () => {
       }
     }
   }
+};
+
+const connectServices = () => {
 
   if (services.items) {
     for (let i = 0; i < services.items.length; i++) {
@@ -117,6 +120,7 @@ var connectDeployments = () => {
       }
     }
   }
+
 };
 
 const colors = [
@@ -174,8 +178,8 @@ const connectUses = () => {
 
 const makeGroupOrder = () => {
   var groupScores = {};
+
   $.each(groups, key => {
-    //console.log("group key: " + key);
     if (!groupScores[key]) {
       groupScores[key] = 0;
     }
@@ -267,8 +271,16 @@ const renderGroups = () => {
             '</span>');
       } else if (value.type === "service") {
 
-        eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
-            '" style="left: ' + 75 + '; top: ' + y + '"/>');
+        const key = 'service-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
+        counts[key] = key in counts ? counts[key] + 1 : 0;
+
+        const left = 10;
+
+        eltDiv = $('<div class="window wide service" title="' + phase + value.metadata.name + '" id="service-' + value.metadata.name +
+            '" style="left: ' + (left + counts[key] * 50) + '; top: ' + (y + 100 + counts[key] * 100 + ix*10) + '"/>');
+
+        //eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
+        //    '" style="left: ' + 75 + '; top: ' + y + '"/>');
         eltDiv.html('<span>' +
             value.metadata.name +
             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
@@ -277,15 +289,15 @@ const renderGroups = () => {
             '</span>');
       } else if (value.type === "deployment") {
 
-        var key = 'deployment-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
+        const key = 'deployment-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
         counts[key] = key in counts ? counts[key] + 1 : 0;
-        //eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="controller-' + value.metadata.name +
-        //	'" style="left: ' + (900 + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
-        var minLeft = 900;
-        var calcLeft = 400 + (value.status.replicas * 130);
-        var left = minLeft > calcLeft ? minLeft : calcLeft;
+        const minLeft = 900;
+        const calcLeft = 400 + (value.status.replicas * 130);
+        const left = minLeft > calcLeft ? minLeft : calcLeft;
+
         eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
             '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
+
         eltDiv.html('<span>' +
             value.metadata.name +
             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
@@ -393,6 +405,7 @@ function refresh(instance) {
           renderNodes();
           renderGroups();
           connectDeployments();
+          connectServices();
 
         } finally {
           setTimeout(() => {
