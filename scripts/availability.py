@@ -4,17 +4,19 @@ import sys
 import time
 import requests
 
-last_response = ""
+
 
 def main(argv):
-    global last_response
+    last_response = ""
+    #global last_response
     while (True):
         try:
             response = requests.get(argv[1])
             print "Status Code: %s"%(response.status_code)
             text = response.text
             if last_response != text:
-                print "====\nRecieved a rolling update\n==="
+                if (bool(last_response)):
+                    print "====\nRecieved a rolling update\n==="
                 last_response = text
             print text
             time.sleep(1)
