@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: k8s-demo
-        image: index.docker.io/sbiyyala/k8s-demo:4
+        image: index.docker.io/sbiyyala/k8s-demo:7
         ports:
         - name: nodejs-port
           containerPort: 3001
