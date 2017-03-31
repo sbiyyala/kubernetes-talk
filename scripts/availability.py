@@ -4,14 +4,21 @@ import sys
 import time
 import requests
 
-
+def convert(url):
+    if url.startswith('http://www.'):
+        return 'http://' + url[len('http://www.'):]
+    if url.startswith('www.'):
+        return 'http://' + url[len('www.'):]
+    if not url.startswith('http://'):
+        return 'http://' + url
+    return url
 
 def main(argv):
     last_response = ""
     #global last_response
     while (True):
         try:
-            response = requests.get(argv[1])
+            response = requests.get(convert(argv[1]))
             print "Status Code: %s"%(response.status_code)
             text = response.text
             if last_response != text:

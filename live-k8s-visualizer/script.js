@@ -40,8 +40,6 @@ var uses = {};
 var groups = {};
 
 const insertByName = (index, value) => {
-  // console.log("type = " + value.type + " labels = " + value.metadata.name);
-  //	var list = groups[value.metadata.name];
   var key = value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run;
   var list = groups[key];
   if (!list) {
