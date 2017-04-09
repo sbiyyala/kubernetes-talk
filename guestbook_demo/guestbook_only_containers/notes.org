@@ -1,0 +1,5 @@
++ kubectl expose pod redis-master-container --type="LoadBalancer"
++ kubectl expose pod redis-master-container --type="LoadBalancer" --port=6379 --target-port=6379
+
+TODO: 
+1. Kill a process instead of killing the container
