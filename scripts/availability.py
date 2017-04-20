@@ -3,6 +3,8 @@
 import sys
 import time
 import requests
+import string
+from random import *
 
 def convert(url):
     if url.startswith('http://www.'):
@@ -15,10 +17,15 @@ def convert(url):
 
 def main(argv):
     last_response = ""
-    #global last_response
+
+    min_char = 15
+    max_char = 20
+    allchar = string.ascii_letters + string.digits
     while (True):
         try:
             response = requests.get(convert(argv[1]))
+            #print "***** Response *****"
+            print "Response id: %s"%("".join(choice(allchar) for x in range(randint(min_char, max_char))))
             print "Status Code: %s"%(response.status_code)
             text = response.text
             if last_response != text:
@@ -26,6 +33,7 @@ def main(argv):
                     print "====\nRecieved a rolling update\n==="
                 last_response = text
             print text
+            #print "***** End of Response *****"
             time.sleep(1)
         except requests.exceptions.ConnectionError:
             print "Connection error"
