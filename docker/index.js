@@ -15,16 +15,14 @@ function getTodaysDate() {
   if(mm<10){
     mm='0'+mm;
   } 
-
   return dd+'/'+mm+'/'+yyyy;
-  
 }
 
 app.get('/', function (req, res) {
 
   
   res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify({ "version": 8, "date": getTodaysDate(), "message": "Welcome to Container Orchestration with k8s!" }, null, 3));
+  res.send(JSON.stringify({ "version": "v1", "date": getTodaysDate(), "message": "Welcome to Container Orchestration with k8s! We are on version v1" }, null, 3));
 });
 
 var server = app.listen(3001, function () {

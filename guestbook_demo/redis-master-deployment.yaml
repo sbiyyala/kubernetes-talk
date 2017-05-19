@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta1 # Deployment manifest file
 kind: Deployment
 metadata:
   name: redis-master-deployment
@@ -6,7 +6,7 @@ spec:
   replicas: 1
   template:
     metadata:
-      labels:
+      labels: # pod labels
         app: redis
         role: master
         visualize: "true"
@@ -35,8 +35,8 @@ spec:
   ports:
     # the port that this service should serve on
   - port: 6379
-    targetPort: 6379
-  selector:
+    targetPort: 6379 # must match containerPort used in Deployment above, matching the labels below
+  selector: # these labels match the set of labels that are defined for the pods in the above deployment
     app: redis
     role: master
     tier: backend

@@ -219,10 +219,15 @@ const renderNodes = () => {
     let ready = 'not_ready';
     $.each(value.status.conditions, (index, condition) => {
       if (condition.type === 'Ready') {
+
+
+
         ready = (condition.status === 'True' ? 'ready' : 'not_ready' )
       }
     });
 
+    //const eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
+    //    '" style="left: ' + 75 + '; top: ' + y + '"/>');
     const eltDiv = $('<div class="window node ' + ready + '" title="' + value.metadata.name + '" id="node-' + value.metadata.name +
         '" style="left: ' + (x + 250) + '; top: ' + y + '"/>');
     eltDiv.html('<span><b>Node</b><br/><br/>' +

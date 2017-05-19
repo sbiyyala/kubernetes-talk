@@ -1,0 +1,42 @@
+* Demo - 1: Guestbook - multi-tier web app 
+---- docker ----
+1. guestbook-compose
+2. kill-guestbook-compose-slave
+3. docker-compose -f guestbook-compose.yml logs -f -t 
+---- k8s ----
+4. guestbook-k8s
+5. get-guestbook-url
+6. get into (minikube || gce)-shell and 
+docker ps | grep -m 1 'slave' | awk '{print $1}' | xargs docker kill &>/dev/null
+6. scale-guestbook
+
+* Demo - 2: Simple node service
+1. kill-guestbook-k8s
+2. switch-ctx-gce
+3. kubectl create -f helloworld-deployment.yml
+4. kubectl describe pod|deployment|svc <pod-name>
+6. ./availability.py <service-url>
+7. kubectl get services 
+   - (or) minikube service helloworld-service --url
+8. *script-shell*, ./kill_containers_in_pods.py
+   1. Show logs in Dashboard UI
+   2. Show no loss of service
+9. kubectl set image deployment helloworld-deployment k8s-demo=sbiyyala/k8s-demo:v2-beta
+10. kubectl set image deployment helloworld-deployment k8s-demo=sbiyyala/k8s-demo:v1
+11. kubectl get nodes 
+& kill the a node which has stuff 
+11. Scaling up/down
++ kubectl scale deployment helloworld-deployment --replicas=5
++ kubectl scale deployment helloworld-deployment --replicas=3
+
+=====
+
+Don't mention that slave is down - "just that something is wrong"
+present the potential scenarios - that we would run into
+how would you do it with 0 downtime
+ask them the question regd. the recovery of the killed container
+
+* Miscellany
++ docker rm $(docker ps -a -f status=exited -q) (rm stopped containers)
++ https://docs.docker.com/docker-for-mac/networking/#use-cases-and-workarounds
++ https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
