@@ -59,14 +59,3 @@ That's it.  The visualizer uses labels to organize the visualization.  In partic
     ```
    http://<public ip>/static/
    ```
-
-### Backlog:
-   * Multiple services/deployments are being overridden on the UI - fix the behavior [the UI is using the same placements as controller code]
-   * Having a 'fixed' node consumes unnecessary space - especially in case of multiple rc/deployments
-   * There looks to be bug in the UI - everything is being done under "connectControllers", should be extracted out(?) Should services be extracted out as well?
-   * Expand the visual box for deployments to show clearly
-   * Eliminate support for RC's. Just support deployments and services
-   * $ kubectl get pods gives the status, #restarts of containers within the pod - can you leverage this info from the api call and customize UI?
-   * TIP: style.css is where you can customize the CSS
-	  
-
