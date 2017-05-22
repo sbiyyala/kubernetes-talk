@@ -8,7 +8,8 @@
 5. get-guestbook-url
 6. get into (minikube || gce)-shell and 
 docker ps | grep -m 1 'slave' | awk '{print $1}' | xargs docker kill &>/dev/null
-6. scale-guestbook
+# 6. scale-guestbook : 
+# kubectl scale deployment redis-slave-deployment --replicas=3
 
 * Demo - 2: Simple node service
 1. kill-guestbook-k8s
@@ -30,13 +31,19 @@ docker ps | grep -m 1 'slave' | awk '{print $1}' | xargs docker kill &>/dev/null
 + kubectl scale deployment helloworld-deployment --replicas=3
 
 =====
-
-Don't mention that slave is down - "just that something is wrong"
-present the potential scenarios - that we would run into
-how would you do it with 0 downtime
-ask them the question regd. the recovery of the killed container
-
 * Miscellany
 + docker rm $(docker ps -a -f status=exited -q) (rm stopped containers)
 + https://docs.docker.com/docker-for-mac/networking/#use-cases-and-workarounds
 + https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes
++ minikube command to retrieve service url: 
+ minikube service frontend --url
++ to kill slave from minikube shell 
+docker ps | grep -m 1 'slave' | awk '{print $1}' | xargs docker kill &>/dev/null
+* Guestbook workings:
++ the frontend app looks up the redis services via: 
+GET_HOSTS_FROM=env variable (which I believe is the default)
+redis-master &
+redis-slave
+which are the names for the k8s services created
+the frontend performs a DNS lookup to find IP addresses of master|slave. This is service-discovery. 
+
