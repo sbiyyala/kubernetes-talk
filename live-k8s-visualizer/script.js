@@ -1,19 +1,20 @@
 'use strict';
 
 /**
- Copyright 2014 Google Inc. All rights reserved.
+   Copyright 2014 Google Inc. All rights reserved.
+   Modified work Copyright 2017 Shishir Biyyala
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
- http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
  */
 
 const truncate = (str, width, left) => {
@@ -36,7 +37,6 @@ var controllers = [];
 var deployments = [];
 var nodes = [];
 var uses = {};
-
 var groups = {};
 
 const insertByName = (index, value) => {
@@ -52,7 +52,7 @@ const insertByName = (index, value) => {
 const groupByName = () => {
   const entityArray = [pods.items, controllers.items, deployments.items, services.items];
   entityArray.filter(Boolean)
-      .forEach(array => $.each(array, insertByName));
+	     .forEach(array => $.each(array, insertByName));
 };
 
 const matchesLabelQuery = (labels, selector) => {
@@ -67,15 +67,12 @@ const matchesLabelQuery = (labels, selector) => {
 };
 
 const connectDeployments = () => {
-  //connectUses();
-
   if (deployments.items) {
     for (let i = 0; i < deployments.items.length; i++) {
       var deployment = deployments.items[i];
       for (let j = 0; j < pods.items.length; j++) {
         var pod = pods.items[j];
         if (matchesLabelQuery(pod.metadata.labels, deployment.spec.selector.matchLabels)) {
-          //console.log('connect controller: ' + 'controller-' + controller.metadata.name + ' to pod-' + pod.metadata.name);
           jsPlumb.connect({
             source: 'deployment-' + deployment.metadata.name,
             target: 'pod-' + pod.metadata.name,
@@ -85,9 +82,6 @@ const connectDeployments = () => {
             endpointStyle: {fillStyle: 'rgb(51,105,232)', radius: 5},
             connector: ["Flowchart", {cornerRadius: 3}]
           });
-
-          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
-          jsPlumb.draggable('deployment-' + deployment.metadata.name, {containment:"parent"});
         }
       }
     }
@@ -103,17 +97,14 @@ const connectServices = () => {
         const pod = pods.items[j];
         if (matchesLabelQuery(pod.metadata.labels, service.spec.selector)) {
           jsPlumb.connect(
-              {
-                source: 'service-' + service.metadata.name,
-                target: 'pod-' + pod.metadata.name,
-                anchors: ["Bottom", "Top"],
-                paintStyle: {lineWidth: 3, strokeStyle: 'rgb(0,153,57)'},
-                endpointStyle: {fillStyle: 'rgb(0,153,57)', radius: 7},
-                connector: ["Flowchart", {cornerRadius: 3}]
-              });
-
-          jsPlumb.draggable('service-' + service.metadata.name, {containment:"parent"});
-          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
+            {
+              source: 'service-' + service.metadata.name,
+              target: 'pod-' + pod.metadata.name,
+              anchors: ["Bottom", "Top"],
+              paintStyle: {lineWidth: 3, strokeStyle: 'rgb(0,153,57)'},
+              endpointStyle: {fillStyle: 'rgb(0,153,57)', radius: 7},
+              connector: ["Flowchart", {cornerRadius: 3}]
+            });
         }
       }
     }
@@ -132,7 +123,6 @@ const connectUses = () => {
   let keys = [];
 
   $.each(uses, key => keys.push(key));
-
   keys.sort((a, b) => a > b);
 
   $.each(keys, idx => {
@@ -147,27 +137,19 @@ const connectUses = () => {
       const podKey = pod.metadata.labels.app ? pod.metadata.labels.app : pod.metadata.labels.run;
       if (podKey == key) {
         $.each(list, (j, serviceId) => {
-          //console.log('connect: ' + 'pod-' + pod.metadata.name + ' to service-' + serviceId);
-          jsPlumb.connect(
-              {
-                source: 'pod-' + pod.metadata.name,
-                target: 'service-' + serviceId,
-                endpoint: "Blank",
-                //anchors:["Bottom", "Top"],
-                anchors: [[0.5, 1, 0, 1, -30, 0], "Top"],
-                //connector: "Straight",
-                connector: ["Bezier", {curviness: 75}],
-                paintStyle: {lineWidth: 2, strokeStyle: color},
-                overlays: [
-                  ["Arrow", {width: 15, length: 10, location: 0.3}],
-                  ["Arrow", {width: 15, length: 10, location: 0.6}],
-                  ["Arrow", {width: 15, length: 10, location: 1}]
-                ]
-              });
-
-          jsPlumb.draggable('pod-' + pod.metadata.name, {containment:"parent"});
-          jsPlumb.draggable('service-' + serviceId, {containment:"parent"});
-
+          jsPlumb.connect({
+            source: 'pod-' + pod.metadata.name,
+            target: 'service-' + serviceId,
+            endpoint: "Blank",
+            anchors: [[0.5, 1, 0, 1, -30, 0], "Top"],
+            connector: ["Bezier", {curviness: 75}],
+            paintStyle: {lineWidth: 2, strokeStyle: color},
+            overlays: [
+              ["Arrow", {width: 15, length: 10, location: 0.3}],
+              ["Arrow", {width: 15, length: 10, location: 0.6}],
+              ["Arrow", {width: 15, length: 10, location: 1}]
+            ]
+          });
         });
       }
     });
@@ -181,7 +163,6 @@ const makeGroupOrder = () => {
     if (!groupScores[key]) {
       groupScores[key] = 0;
     }
-
     if (uses[key]) {
       const value = uses[key];
       $.each(value, (ix, uses_label) => {
@@ -204,9 +185,7 @@ const makeGroupOrder = () => {
   $.each(groupScores, key => {
     groupOrder.push(key);
   });
-
   groupOrder.sort((a, b) => groupScores[a] - groupScores[b]);
-
   return groupOrder;
 };
 
@@ -214,30 +193,21 @@ const renderNodes = () => {
   var y = 25;
   var x = 100;
   $.each(nodes.items, (index, value) => {
-
     const div = $('<div/>');
     let ready = 'not_ready';
     $.each(value.status.conditions, (index, condition) => {
       if (condition.type === 'Ready') {
-
-
-
         ready = (condition.status === 'True' ? 'ready' : 'not_ready' )
       }
     });
-
-    //const eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
-    //    '" style="left: ' + 75 + '; top: ' + y + '"/>');
     const eltDiv = $('<div class="window node ' + ready + '" title="' + value.metadata.name + '" id="node-' + value.metadata.name +
-        '" style="left: ' + (x + 250) + '; top: ' + y + '"/>');
+		     '" style="left: ' + (x + 250) + '; top: ' + y + '"/>');
     eltDiv.html('<span><b>Node</b><br/><br/>' +
-        truncate(value.metadata.name, 6) +
-        '</span>');
+		truncate(value.metadata.name, 6) +
+		'</span>');
     div.append(eltDiv);
-
     const elt = $('.nodesbar');
     elt.append(div);
-
     x += 120;
   });
 };
@@ -256,22 +226,20 @@ const renderGroups = () => {
     var div = $('<div/>');
     var x = 100;
     $.each(list, (index, value) => {
-      //console.log("render groups: " + value.type + ", " + value.metadata.name + ", " + index);
       var eltDiv = null;
       var phase = value.status.phase ? value.status.phase.toLowerCase() : '';
       if (value.type === "pod") {
         if ('deletionTimestamp' in value.metadata || anyDeadContainers(value)) {
           phase = 'terminating';
         }
-
         eltDiv = $('<div class="window pod ' + phase + '" title="' + value.metadata.name + '" id="pod-' + value.metadata.name +
-            '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
+		   '" style="left: ' + (x + 250) + '; top: ' + (y + 160) + '"/>');
         eltDiv.html('<span>' +
-            truncate(value.metadata.name, 8, true) +
-            (value.metadata.labels.version ? "<br/>" + value.metadata.labels.version : "") + "<br/>" +
-            (value.status.podIP ? value.status.podIP : "") + "<br/><br/>" +
-            "(" + (value.spec.nodeName ? truncate(value.spec.nodeName, 6) : "None") + ")" +
-            '</span>');
+		    truncate(value.metadata.name, 8, true) +
+             (value.metadata.labels.version ? "<br/>" + value.metadata.labels.version : "") + "<br/>" +
+             (value.status.podIP ? value.status.podIP : "") + "<br/><br/>" +
+		    "(" + (value.spec.nodeName ? truncate(value.spec.nodeName, 6) : "None") + ")" +
+		    '</span>');
       } else if (value.type === "service") {
 
         const key = 'service-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
@@ -280,16 +248,14 @@ const renderGroups = () => {
         const left = 10;
 
         eltDiv = $('<div class="window wide service" title="' + phase + value.metadata.name + '" id="service-' + value.metadata.name +
-            '" style="left: ' + (left + counts[key] * 50) + '; top: ' + (y + 100 + counts[key] * 100 + ix*10) + '"/>');
+		   '" style="left: ' + (left + counts[key] * 50) + '; top: ' + (y + 100 + counts[key] * 100 + ix*10) + '"/>');
 
-        //eltDiv = $('<div class="window wide service ' + phase + '" title="' + value.metadata.name + '" id="service-' + value.metadata.name +
-        //    '" style="left: ' + 75 + '; top: ' + y + '"/>');
         eltDiv.html('<span>' +
-            value.metadata.name +
-            (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
-            (value.spec.clusterIP ? "<br/><br/>" + value.spec.clusterIP : "") +
-            (value.status.loadBalancer && value.status.loadBalancer.ingress ? "<br/><a style='color:white; text-decoration: underline' href='http://" + value.status.loadBalancer.ingress[0].ip + "'>" + value.status.loadBalancer.ingress[0].ip + "</a>" : "") +
-            '</span>');
+		    value.metadata.name +
+             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
+             (value.spec.clusterIP ? "<br/><br/>" + value.spec.clusterIP : "") +
+             (value.status.loadBalancer && value.status.loadBalancer.ingress ? "<br/><a style='color:white; text-decoration: underline' href='http://" + value.status.loadBalancer.ingress[0].ip + "'>" + value.status.loadBalancer.ingress[0].ip + "</a>" : "") +
+		    '</span>');
       } else if (value.type === "deployment") {
 
         const key = 'deployment-' + (value.metadata.labels.app ? value.metadata.labels.app : value.metadata.labels.run);
@@ -299,12 +265,12 @@ const renderGroups = () => {
         const left = minLeft > calcLeft ? minLeft : calcLeft;
 
         eltDiv = $('<div class="window wide controller" title="' + value.metadata.name + '" id="deployment-' + value.metadata.name +
-            '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
+		   '" style="left: ' + (left + counts[key] * 100) + '; top: ' + (y + 100 + counts[key] * 100) + '"/>');
 
         eltDiv.html('<span>' +
-            value.metadata.name +
-            (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
-            '</span>');
+		    value.metadata.name +
+             (value.metadata.labels.version ? "<br/><br/>" + value.metadata.labels.version : "") +
+		    '</span>');
       }
 
       div.append(eltDiv);
@@ -354,7 +320,6 @@ const loadData = () => {
     if (data.items) {
       $.each(data.items, (key, val) => {
         val.type = 'service';
-        //console.log("service ID = " + val.metadata.name)
       });
     }
   });
@@ -365,7 +330,6 @@ const loadData = () => {
     if (data.items) {
       $.each(data.items, (key, val) => {
         val.type = 'node';
-        //console.log("service ID = " + val.metadata.name)
       });
     }
   });
@@ -377,7 +341,6 @@ const loadData = () => {
     if (data.items) {
       $.each(data.items, (key, val) => {
         val.type = 'deployment';
-        //console.log("Controller ID = " + val.metadata.name)
       });
     }
   });
@@ -385,8 +348,6 @@ const loadData = () => {
   $.when(podsResponse, servicesReponse, nodesResponse, deploymentsReponse).then( () => {
     deferred.resolve();
   });
-
-
   return deferred;
 };
 
@@ -399,28 +360,25 @@ function refresh(instance) {
   uses = {};
   groups = {};
 
-
   $.when(loadData())
-      .then(() => {
-        try {
-          groupByName();
-          $('#sheet').empty();
-          renderNodes();
-          renderGroups();
-          connectDeployments();
-          connectServices();
-
-        } finally {
-          setTimeout(() => {
-            refresh(instance);
-          }, 1000);
-        }
-      });
+   .then(() => {
+     try {
+       groupByName();
+       $('#sheet').empty();
+       renderNodes();
+       renderGroups();
+       connectDeployments();
+       connectServices();
+     } finally {
+       setTimeout(() => {
+         refresh(instance);
+       }, 1000);
+     }
+   });
 }
 
 jsPlumb.bind("ready", () => {
   var instance = jsPlumb.getInstance({
-    // default drag options
     DragOptions: {cursor: 'pointer', zIndex: 2000},
     // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
     // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
