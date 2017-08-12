@@ -334,7 +334,7 @@ const loadData = () => {
     }
   });
 
-  const deploymentsReponse = $.getJSON("/apis/extensions/v1beta1/namespaces/default/deployments?labelSelector=visualize%3Dtrue", data => {
+  const deploymentsResponse = $.getJSON("/apis/extensions/v1beta1/namespaces/default/deployments?labelSelector=visualize%3Dtrue", data => {
 
     deployments = data;
 
@@ -345,7 +345,7 @@ const loadData = () => {
     }
   });
 
-  $.when(podsResponse, servicesReponse, nodesResponse, deploymentsReponse).then( () => {
+  $.when(podsResponse, servicesReponse, nodesResponse, deploymentsResponse).then( () => {
     deferred.resolve();
   });
   return deferred;
@@ -396,5 +396,4 @@ jsPlumb.bind("ready", () => {
 
   refresh(instance);
   jsPlumb.fire("jsPlumbDemoLoaded", instance);
-
 });
